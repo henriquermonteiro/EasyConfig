@@ -6,7 +6,7 @@ public final class Validator{
     public static boolean validate(Properties model, Properties prop, boolean strict){
         int model_count = 0;
     
-        for(Object model_key in model.getKeyValues()){
+        for(Object model_key : model.keySet()){
             String conditions = model.get(model_key).toString();
             
             Object prop_value = prop.get(model_key);
@@ -22,7 +22,7 @@ public final class Validator{
             int index = conditions.indexOf("matches[/");
             if(index != -1){
                 int index_end = conditions.indexOf("/]-");
-                string regex = conditions.substring(index + 8, index_end);
+                String regex = conditions.substring(index + 9, index_end);
                 
                 if(!prop_value.toString().matches(regex)){
                     return false;
@@ -32,6 +32,6 @@ public final class Validator{
             model_count++;
         }
         
-        return (strict ? model_count == prop.getKeyValues().lenght : true);
+        return (strict ? model_count == prop.keySet().size() : true);
     }
 }
