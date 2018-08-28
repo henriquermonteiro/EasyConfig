@@ -32,20 +32,30 @@ public final class Parser {
         }
 
         if (line.trim().length() > 1) {
-            String[] splitted = line.split(":");
-            int index = 2;
-            if (splitted.length > 1) {
-                String value = splitted[1].trim();
+            if (line.contains(":")) {
+                String[] splitted = line.split(":");
+                int index = 2;
+                
+                String value;
+                
+                if(splitted.length > 1){
+                    value = splitted[1].trim();
+                    
+                    while (value.charAt(value.length() - 1) == '/') {
+                        value = value.substring(0, value.length() - 1).concat(":" + splitted[index++]);
+                    }
 
-                while (value.charAt(value.length() - 1) == '/') {
-                    value = value.substring(0, value.length() - 1).concat(":" + splitted[index++]);
+                    value = value.trim();
+                }else{
+                    value = "";
                 }
+                
 
                 if(properties.containsKey(splitted[0])){
-                    properties.put(splitted[0].trim(), value.trim());
+                    properties.put(splitted[0].trim(), value);
                     Logger.getLogger(EasyConfig.class.getName()).log(Level.WARNING, "Attribute overriden ({0}) = {1}", new Object[]{splitted[0].trim(), value});
                 }else{
-                    properties.put(splitted[0].trim(), value.trim());
+                    properties.put(splitted[0].trim(), value);
                     Logger.getLogger(EasyConfig.class.getName()).log(Level.INFO, "Attribute set ({0}) = {1}", new Object[]{splitted[0].trim(), value});
                 }
             }else{

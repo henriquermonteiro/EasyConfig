@@ -1,11 +1,13 @@
 package net.lib.easyconfig;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.lib.easyconfig.parser.Parser;
 import net.lib.easyconfig.reader.Reader;
+import net.lib.easyconfig.writer.Writer;
 
 /**
  *
@@ -56,5 +58,34 @@ public class EasyConfig {
         reader.close();
         
         return (model != null ? (Validator.validate(model, parser.getProperties(), strict) ? parser.getProperties() : null) : parser.getProperties());
+    }
+    
+    public static boolean saveConfigs(String source, Properties values){
+        return saveConfigs(source, null, values, false);
+    }
+    
+    public static boolean saveConfigs(String source, Properties model, Properties values, boolean strict){
+        if(source == null || source.isEmpty()){
+            source = "config.conf";
+        }
+        
+        File f = new File(source);
+        
+        if(f.isFile()){
+            return Writer.writeConfigFormatted(f, values, model, strict);
+            
+        }else{
+            mkdirsRec(f.getParentFile());
+            
+            return Writer.writeConfigUnformatted(f, values, model, strict);
+        }
+    }
+    
+    private static void mkdirsRec(File f){
+        if(f.isDirectory() && !f.exists()){
+            mkdirsRec(f.getParentFile());
+            
+            f.mkdir();
+        }
     }
 }
